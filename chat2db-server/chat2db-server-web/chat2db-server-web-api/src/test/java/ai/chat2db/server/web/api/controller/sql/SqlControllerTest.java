@@ -35,13 +35,38 @@ public class SqlControllerTest {
     }
 
     @Test
-    // Test handling of empty SQL input: Verifies the method can handle empty strings without errors.
+    public void testSqlWithRightFormat(){
+        // The format is already a right format, and no change is expected
+        String inputSql =
+                "SELECT\n" +
+                        "  *\n" +
+                        "FROM\n" +
+                        "  terms\n" +
+                        "ORDER BY\n" +
+                        "  terms_due_days DESC;";
+        SqlFormatRequest request = new SqlFormatRequest();
+        request.setSql(inputSql);
+
+        String expectedFormattedSql =
+                "SELECT\n" +
+                        "  *\n" +
+                        "FROM\n" +
+                        "  terms\n" +
+                        "ORDER BY\n" +
+                        "  terms_due_days DESC;";
+        DataResult<String> result = sqlController.list(request);
+        assertEquals(expectedFormattedSql, result.getData());
+    }
+
+    @Test
     public void testSqlFormatWithEmptySql() {
+        // Test handling of empty SQL input: Verifies the method can handle empty strings without errors.
         SqlFormatRequest request = new SqlFormatRequest();
         request.setSql("");
         DataResult<String> result = sqlController.list(request);
         assertEquals("", result.getData());
     }
+
     @Test
     public void testSqlFormatWithIncorrectSql() {
         // Test formatting with incorrect SQL syntax: Checks how the formatter handles SQL with syntax errors

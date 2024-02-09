@@ -15,6 +15,8 @@ import java.sql.Statement;
 
 class SQLExecutorTest {
 
+    // mock dependencies
+
     @Mock
     private Connection mockConnection;
     @Mock
@@ -35,7 +37,8 @@ class SQLExecutorTest {
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockStatement.execute(anyString())).thenReturn(true);
         when(mockStatement.getResultSet()).thenReturn(mockResultSet);
-        when(mockResultSet.next()).thenReturn(true, false); // assume a line data
+        when(mockResultSet.next()).thenReturn(true, false);
+        // expect a line data
         when(mockResultSet.getString(anyInt())).thenReturn("test result");
 
         // execute test method
