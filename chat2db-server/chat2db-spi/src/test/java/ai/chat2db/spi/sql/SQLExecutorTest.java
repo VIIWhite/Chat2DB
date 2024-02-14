@@ -16,7 +16,6 @@ import java.sql.Statement;
 class SQLExecutorTest {
 
     // mock dependencies
-
     @Mock
     private Connection mockConnection;
     @Mock
