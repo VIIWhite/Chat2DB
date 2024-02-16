@@ -6,12 +6,14 @@ import ai.chat2db.server.tools.common.exception.ParamBusinessException;
 import okhttp3.OkHttpClient;
 import okhttp3.sse.EventSourceListener;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 
 public class AzureOpenAiStreamClientTest {
+
 
     @Test
     public void builderSetsApiKeyCorrectly() {
@@ -54,8 +56,6 @@ public class AzureOpenAiStreamClientTest {
     }
 
 
-
-
     @Test
     public void streamCompletionsThrowsExceptionOnEmptyChatMessages() {
         //test if the ParamBusinessException is thrown for empty chat messages
@@ -70,8 +70,7 @@ public class AzureOpenAiStreamClientTest {
             client.streamCompletions(Collections.emptyList(), mock(EventSourceListener.class));
         });
     }
-
-
-
-
 }
+
+
+

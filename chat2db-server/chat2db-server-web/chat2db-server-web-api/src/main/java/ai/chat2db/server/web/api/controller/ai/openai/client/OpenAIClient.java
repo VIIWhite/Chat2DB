@@ -103,7 +103,7 @@ public class OpenAIClient {
         apiKey = apikey;
     }
 
-    private static String maskApiKey(String input) {
+    static String maskApiKey(String input) {
         if (input == null) {
             return input;
         }
@@ -114,4 +114,5 @@ public class OpenAIClient {
         }
         return maskedString.toString();
     }
+
 }
