@@ -15,16 +15,16 @@ jobs:
             file_extension: ".exe"
             file_name: "https://oss.sqlgpt.cn/test/99.0.${{ github.run_id }}/Chat2DB-Test%20Setup%2099.0.${{ github.run_id }}-Test.exe"
             build_arg: "--win --x64"
-          - os: macos-latest
-            arch: x86_64
-            file_name: "https://download.sqlgpt.cn/test/99.0.${{ github.run_id }}/Chat2DB-Test-99.0.${{ github.run_id }}-Test.dmg"
-            file_extension: ".dmg"
-            build_arg: "--mac --x64"
-          - os: macos-latest
-            arch: arm64
-            file_name: "https://download.sqlgpt.cn/test/99.0.${{ github.run_id }}/Chat2DB-Test-99.0.${{ github.run_id }}-Test-arm64.dmg"
-            file_extension: ".dmg"
-            build_arg: "--mac --arm64"
+#          - os: macos-latest
+#            arch: x86_64
+#            file_name: "https://download.sqlgpt.cn/test/99.0.${{ github.run_id }}/Chat2DB-Test-99.0.${{ github.run_id }}-Test.dmg"
+#            file_extension: ".dmg"
+#            build_arg: "--mac --x64"
+#          - os: macos-latest
+#            arch: arm64
+#            file_name: "https://download.sqlgpt.cn/test/99.0.${{ github.run_id }}/Chat2DB-Test-99.0.${{ github.run_id }}-Test-arm64.dmg"
+#            file_extension: ".dmg"
+#            build_arg: "--mac --arm64"
           - os: ubuntu-latest
             file_name: "https://download.sqlgpt.cn/test/99.0.${{ github.run_id }}/Chat2DB-Test-99.0.${{ github.run_id }}-Test.AppImage"
             file_extension: ".AppImage"
@@ -132,8 +132,8 @@ jobs:
         with:
           package_root: "chat2db-client/"
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          mac_certs: ${{ secrets.mac_certs }}
-          mac_certs_password: ${{ secrets.mac_certs_password }}
+#          mac_certs: ${{ secrets.mac_certs }}
+#          mac_certs_password: ${{ secrets.mac_certs_password }}
           skip_build: true
           args: >
             -c.appId=com.chat2db.test
@@ -143,18 +143,18 @@ jobs:
             -c.extraMetadata.version=99.0.${{ github.run_id }}-Test
             ${{ matrix.build_arg}}
 
-      # 公证&签名 Mac App
-      - name: Notarize MacOS x86_64 App
-        if: matrix.os == 'macos-latest' && matrix.arch == 'x86_64'
-        run: |
-          xcrun notarytool store-credentials "Chat2DB" --apple-id "${{ secrets.MAC_APPLE_ID }}" --password "${{ secrets.MAC_APPLE_PASSWORD }}" --team-id "${{ secrets.MAC_TEAM_ID }}"
-          xcrun notarytool submit chat2db-client/release/Chat2DB-Test-99.0.${{ github.run_id }}-Test.dmg --keychain-profile "Chat2DB"
-      
-      - name: Notarize MacOS ARM64 App
-        if: matrix.os == 'macos-latest' && matrix.arch == 'arm64'
-        run: |
-          xcrun notarytool store-credentials "Chat2DB" --apple-id "${{ secrets.MAC_APPLE_ID }}" --password "${{ secrets.MAC_APPLE_PASSWORD }}" --team-id "${{ secrets.MAC_TEAM_ID }}"
-          xcrun notarytool submit chat2db-client/release/Chat2DB-Test-99.0.${{ github.run_id }}-Test-arm64.dmg --keychain-profile "Chat2DB"
+#      # 公证&签名 Mac App
+#      - name: Notarize MacOS x86_64 App
+#        if: matrix.os == 'macos-latest' && matrix.arch == 'x86_64'
+#        run: |
+#          xcrun notarytool store-credentials "Chat2DB" --apple-id "${{ secrets.MAC_APPLE_ID }}" --password "${{ secrets.MAC_APPLE_PASSWORD }}" --team-id "${{ secrets.MAC_TEAM_ID }}"
+#          xcrun notarytool submit chat2db-client/release/Chat2DB-Test-99.0.${{ github.run_id }}-Test.dmg --keychain-profile "Chat2DB"
+#
+#      - name: Notarize MacOS ARM64 App
+#        if: matrix.os == 'macos-latest' && matrix.arch == 'arm64'
+#        run: |
+#          xcrun notarytool store-credentials "Chat2DB" --apple-id "${{ secrets.MAC_APPLE_ID }}" --password "${{ secrets.MAC_APPLE_PASSWORD }}" --team-id "${{ secrets.MAC_TEAM_ID }}"
+#          xcrun notarytool submit chat2db-client/release/Chat2DB-Test-99.0.${{ github.run_id }}-Test-arm64.dmg --keychain-profile "Chat2DB"
     
           
       
@@ -172,63 +172,63 @@ jobs:
           cd static/ && zip -r chat2db-server-start.zip ./ 
           cp -r chat2db-server-start.zip ../../../../oss_temp_file
 
-      # 准备发往OSS的文件
-      - name: Prepare upload for OSS
-        run: |
-          mkdir -p oss_temp_file
-          cp -r chat2db-client/release/*${{ matrix.file_extension }} ./oss_temp_file
+#      # 准备发往OSS的文件
+#      - name: Prepare upload for OSS
+#        run: |
+#          mkdir -p oss_temp_file
+#          cp -r chat2db-client/release/*${{ matrix.file_extension }} ./oss_temp_file
+#
+#      # 设置OSS
+#      - name: Set up oss utils
+#        uses: yizhoumo/setup-ossutil@v1
+#        with:
+#          endpoint: "oss-accelerate.aliyuncs.com"
+#          access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
+#          access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+#          ossutil-version: "1.7.16"
+#
+#      # 上传到OSS
+#      - name: Upload to OSS
+#        run: |
+#          ossutil cp -rf --acl=public-read ./oss_temp_file/ oss://chat2db-client/test/99.0.${{ github.run_id }}/
 
-      # 设置OSS
-      - name: Set up oss utils
-        uses: yizhoumo/setup-ossutil@v1
-        with:
-          endpoint: "oss-accelerate.aliyuncs.com"
-          access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
-          access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
-          ossutil-version: "1.7.16"
-
-      # 上传到OSS
-      - name: Upload to OSS
-        run: |
-          ossutil cp -rf --acl=public-read ./oss_temp_file/ oss://chat2db-client/test/99.0.${{ github.run_id }}/
-
-      # 配置SSH 待上传到服务器
-      - name: Install ssh key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SERVER_DOWNLOAD_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa ${{ secrets.SERVER_DOWNLOAD_HOST }} >> ~/.ssh/known_hosts
-          eval `ssh-agent -s`
-          ssh-add ~/.ssh/id_rsa     
-      # 上传到服务器
-      - name: Upload package
-        run: |
-          ssh -t ${{ secrets.SERVER_DOWNLOAD_USERNAME }}@${{ secrets.SERVER_DOWNLOAD_HOST }} "mkdir -p ${{ secrets.SERVER_DOWNLOAD_PATH }}/test//99.0.${{ github.run_id }}" 
-          scp ./oss_temp_file/* ${{ secrets.SERVER_DOWNLOAD_USERNAME }}@${{ secrets.SERVER_DOWNLOAD_HOST }}:${{ secrets.SERVER_DOWNLOAD_PATH }}/test//99.0.${{ github.run_id }}/ 
+#      # 配置SSH 待上传到服务器
+#      - name: Install ssh key
+#        run: |
+#          mkdir -p ~/.ssh
+#          echo "${{ secrets.SERVER_DOWNLOAD_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+#          chmod 600 ~/.ssh/id_rsa
+#          ssh-keyscan -t rsa ${{ secrets.SERVER_DOWNLOAD_HOST }} >> ~/.ssh/known_hosts
+#          eval `ssh-agent -s`
+#          ssh-add ~/.ssh/id_rsa
+#      # 上传到服务器
+#      - name: Upload package
+#        run: |
+#          ssh -t ${{ secrets.SERVER_DOWNLOAD_USERNAME }}@${{ secrets.SERVER_DOWNLOAD_HOST }} "mkdir -p ${{ secrets.SERVER_DOWNLOAD_PATH }}/test//99.0.${{ github.run_id }}"
+#          scp ./oss_temp_file/* ${{ secrets.SERVER_DOWNLOAD_USERNAME }}@${{ secrets.SERVER_DOWNLOAD_HOST }}:${{ secrets.SERVER_DOWNLOAD_PATH }}/test//99.0.${{ github.run_id }}/
               
 
-      # 发送到DingTalk
-      - name: Send dingtalk message
-        uses: ghostoy/dingtalk-action@master
-        with:
-          webhook: ${{ secrets.DINGTALK_WEBHOOK }}
-          msgtype: markdown
-          content: |
-            {
-              "title": "${{ matrix.os }}-test-打包完成通知",
-              "text": "# ${{ matrix.os }}-test-打包完成通知\n !\n ###  任务id：[${{ github.run_id }}](https://github.com/chat2db/Chat2DB/actions/runs/${{ github.run_id }})\n ### 下载地址：[${{matrix.file_name}}](${{matrix.file_name}})"
-            }
-
-      # 发送Jar包地址到DingTalk
-      - if: ${{ runner.os == 'macOS' && matrix.arch == 'x86_64' }}
-        name: Send dingtalk message
-        uses: ghostoy/dingtalk-action@master
-        with:
-          webhook: ${{ secrets.DINGTALK_WEBHOOK }}
-          msgtype: markdown
-          content: |
-            {
-              "title": "Jar-test-构建完成通知",
-              "text": "### jar包下载地址：[https://download.sqlgpt.cn/test/99.0.${{ github.run_id }}/chat2db-server-start.zip](https://download.sqlgpt.cn/test/99.0.${{ github.run_id }}/chat2db-server-start.zip) "
-            }
+#      # 发送到DingTalk
+#      - name: Send dingtalk message
+#        uses: ghostoy/dingtalk-action@master
+#        with:
+#          webhook: ${{ secrets.DINGTALK_WEBHOOK }}
+#          msgtype: markdown
+#          content: |
+#            {
+#              "title": "${{ matrix.os }}-test-打包完成通知",
+#              "text": "# ${{ matrix.os }}-test-打包完成通知\n !\n ###  任务id：[${{ github.run_id }}](https://github.com/chat2db/Chat2DB/actions/runs/${{ github.run_id }})\n ### 下载地址：[${{matrix.file_name}}](${{matrix.file_name}})"
+#            }
+#
+#      # 发送Jar包地址到DingTalk
+#      - if: ${{ runner.os == 'macOS' && matrix.arch == 'x86_64' }}
+#        name: Send dingtalk message
+#        uses: ghostoy/dingtalk-action@master
+#        with:
+#          webhook: ${{ secrets.DINGTALK_WEBHOOK }}
+#          msgtype: markdown
+#          content: |
+#            {
+#              "title": "Jar-test-构建完成通知",
+#              "text": "### jar包下载地址：[https://download.sqlgpt.cn/test/99.0.${{ github.run_id }}/chat2db-server-start.zip](https://download.sqlgpt.cn/test/99.0.${{ github.run_id }}/chat2db-server-start.zip) "
+#            }
