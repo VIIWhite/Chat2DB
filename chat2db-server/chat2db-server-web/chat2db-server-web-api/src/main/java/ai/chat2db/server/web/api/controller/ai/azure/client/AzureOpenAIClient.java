@@ -74,7 +74,7 @@ public class AzureOpenAIClient {
         apiKey = key;
     }
 
-    private static String maskApiKey(String input) {
+    public static String maskApiKey(String input) {
         if (input == null) {
             return input;
         }
